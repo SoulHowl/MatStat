@@ -6,7 +6,7 @@ matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider, Button
 
-init_n = 27
+init_n = 26
 
 
 def generate_samps(n):
@@ -71,4 +71,3 @@ if __name__ == "__main__":
     button.on_clicked(generate)
 
     plt.show()
-    #plt.savefig("lab1.png")
