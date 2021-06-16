@@ -3,7 +3,7 @@ from lab1 import generate_samps
 
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.widgets import Slider, Button
+
 
 init_n = 100
 init_m = 10
@@ -13,24 +13,27 @@ def generate_data_for_f_via_intervals(samps, m):
     n = len(samps)
     xdots = [min(samps)] + [min(samps) + (max(samps) - min(samps)) * (i + 1) / m for i in range(m)]
     ydots = [0]
+    num_dots = []
     ind = 0
     for i in range(m):
         cnt = 0
         while ind < n and samps[ind] <= xdots[i + 1]:
             ind += 1
             cnt += 1
+        num_dots.append(cnt)
         try:
             ydots += [cnt / n * m / (max(samps) - min(samps))]
         except ZeroDivisionError:
             ydots += [np.inf]
     xdots += [max(samps)]
     ydots += [0]
-    return xdots, ydots
+    return xdots, ydots, num_dots
 
 
 def generate_data_for_f_via_probabilities(samps, m):
     n = len(samps)
-    if m > n: m = n
+    if m > n:
+        m = n
     xdots = [min(samps)]
     ydots = [0]
     cnt = n / m
@@ -47,75 +50,87 @@ def generate_data_for_f_via_probabilities(samps, m):
     ydots += [0]
     return xdots, ydots
 
+import matplotlib.patches as patches
 
-if __name__ == "__main__":
 
+def build_intervals(n, m):
+    fig, ax1 = plt.subplots()
     init_data = generate_samps(init_n)
     init_data_intervals = generate_data_for_f_via_intervals(init_data, init_m)
-    init_data_probabilities = generate_data_for_f_via_probabilities(init_data, init_m)
 
     print()
     print(f"n = {init_n}, m = {init_m}")
     print("intervals method")
     print("   y   |  f(y)")
-    xdots, ydots = init_data_intervals
-    for i in range(2, len(xdots) - 2):
+    xdots, ydots, nums = init_data_intervals
+    for i in range(1, len(xdots) - 1):
         print("{:+.3f} | {:.3f}".format(xdots[i], ydots[i]))
+    xplot = np.linspace(L - 1, R + 1, plotdots)
+    yplot = [f(x) for x in xplot]
+    plt.plot(xplot, yplot, linewidth=3, color='red')
+    ax, ay, nums = init_data_intervals
+    ax1.plot([-1, 4], [0,0])
+    for j in range(m):
+        ax1.add_patch(
+            patches.Rectangle(
+                (ax[j], 0),
+                ax[j+1]-ax[j],
+                ay[j+1],
+                edgecolor='blue',
+                facecolor='red',
+                fill=False
+            ))
+    #print(nums)
+    for i in range(m):
+        nums[i] /= n
+    xnums = []
+    for i in range(m):
+        xnums.append((ax[i] + ax[i+1]) / 2)
+    #plt.scatter(xnums, nums)
+    plt.plot(xnums, nums)
+    plt.show()
+
+
+def build_probabilities(n, m):
+    fig, ax1 = plt.subplots()
+    init_data = generate_samps(init_n)
+    init_data_probabilities = generate_data_for_f_via_probabilities(init_data, init_m)
 
     print()
     print("probabilities method")
     print("   y   |  f(y)")
     xdots, ydots = init_data_probabilities
-    for i in range(2, len(xdots) - 2):
+    for i in range(1, len(xdots) - 1):
         print("{:+.3f} | {:.3f}".format(xdots[i], ydots[i]))
-
-    fig, ax = plt.subplots()
 
     xplot = np.linspace(L - 1, R + 1, plotdots)
     yplot = [f(x) for x in xplot]
+    plt.plot(xplot, yplot, linewidth=3, color='red')
+    ax, ay = init_data_probabilities
+    ax1.plot([-1, 4], [0,0])
+    for j in range(m):
+        ax1.add_patch(
+            patches.Rectangle(
+                (ax[j], 0),
+                ax[j+1]-ax[j],
+                ay[j+1],
+                edgecolor='blue',
+                facecolor='red',
+                fill=False
+            ))
 
-    realline, = plt.plot(xplot, yplot, linewidth=3, color='grey')
-    intervalline, = plt.step(*init_data_intervals, where='pre', linewidth=3, color='blue')
-    probabilityline, = plt.step(*init_data_probabilities, where='pre', linewidth=3, color='red')
-
-    plt.subplots_adjust(left=0.1, bottom=0.25)
-
-    n_slider = Slider(
-        ax=plt.axes([0.15, 0.1, 0.5, 0.03]),
-        label='n = 2 ^ ',
-        valmin=0,
-        valmax=15,
-        valinit=0,
-    )
-
-    m_slider = Slider(
-        ax=plt.axes([0.15, 0.05, 0.5, 0.03]),
-        label='m = 2 ^ ',
-        valmin=0,
-        valmax=15,
-        valinit=1,
-    )
-
-
-    def update(val):
-        n = int(2 ** n_slider.val)
-        m = int(2 ** m_slider.val)
-        data = generate_samps(n)
-        intervalline.set_data(*generate_data_for_f_via_intervals(data, m))
-        probabilityline.set_data(*generate_data_for_f_via_probabilities(data, m))
-        fig.canvas.draw_idle()
-
-
-    n_slider.on_changed(update)
-    m_slider.on_changed(update)
-
-    button = Button(plt.axes([0.75, 0.1, 0.15, 0.05]), 'Generate')
-
-
-    def generate(event):
-        update(None)
-
-
-    button.on_clicked(generate)
+    nums = [m/n] * m
+    xnums = []
+    for i in range(m):
+        xnums.append((ax[i] + ax[i+1]) / 2)
+    plt.plot(xnums, nums)
 
     plt.show()
+
+
+if __name__ == "__main__":
+    #init_n = int(input())
+    #init_m = round(init_n ** 0.5)
+    #build_intervals(init_n,init_m)
+    build_probabilities(init_n,init_m)
+
