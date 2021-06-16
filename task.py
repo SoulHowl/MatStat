@@ -1,6 +1,6 @@
-from info import *
-from lab1 import generate_samps, generate_data_for_F
-from lab2 import generate_data_for_f_via_intervals, generate_data_for_f_via_probabilities
+from lab1.info import *
+from lab1.lab1 import generate_samps, generate_data_for_F
+from lab2.lab2 import generate_data_for_f_via_intervals, generate_data_for_f_via_probabilities
 
 import numpy as np
 import matplotlib.pyplot as plt

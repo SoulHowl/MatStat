@@ -1,5 +1,5 @@
 from info import *
-from lab1 import generate_samps
+from lab1.lab1 import generate_samps
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -9,7 +9,7 @@ init_n = 100
 init_m = 10
 
 
-def generate_data_for_f_via_intervals(samps, m):
+def generate_intervals(samps, m):
     n = len(samps)
     xdots = [min(samps)] + [min(samps) + (max(samps) - min(samps)) * (i + 1) / m for i in range(m)]
     ydots = [0]
@@ -30,7 +30,7 @@ def generate_data_for_f_via_intervals(samps, m):
     return xdots, ydots, num_dots
 
 
-def generate_data_for_f_via_probabilities(samps, m):
+def generate_probabilities(samps, m):
     n = len(samps)
     if m > n:
         m = n
@@ -56,7 +56,7 @@ import matplotlib.patches as patches
 def build_intervals(n, m):
     fig, ax1 = plt.subplots()
     init_data = generate_samps(init_n)
-    init_data_intervals = generate_data_for_f_via_intervals(init_data, init_m)
+    init_data_intervals = generate_intervals(init_data, init_m)
 
     print()
     print(f"n = {init_n}, m = {init_m}")
@@ -94,7 +94,7 @@ def build_intervals(n, m):
 def build_probabilities(n, m):
     fig, ax1 = plt.subplots()
     init_data = generate_samps(init_n)
-    init_data_probabilities = generate_data_for_f_via_probabilities(init_data, init_m)
+    init_data_probabilities = generate_probabilities(init_data, init_m)
 
     print()
     print("probabilities method")

@@ -6,7 +6,7 @@ matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Slider, Button
 
-init_n = 26
+init_n = 40
 
 
 def generate_samps(n):
@@ -39,7 +39,6 @@ if __name__ == "__main__":
     yplot = [F(x) for x in xplot]
 
     realline, = plt.plot(xplot, yplot, linewidth=3, color='grey')
-    smoothline, = plt.plot(*init_data, linewidth=3, color='orange')
     stepline, = plt.step(*init_data, where='post', linewidth=2, color='blue')
 
     n_slider = Slider(
@@ -54,7 +53,7 @@ if __name__ == "__main__":
     def update(val):
         n = int(2 ** n_slider.val)
         data = generate_data_for_F(n)
-        smoothline.set_data(*data)
+
         stepline.set_data(*data)
         fig.canvas.draw_idle()
 
