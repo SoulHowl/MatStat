@@ -11,44 +11,44 @@ init_m = 10
 
 def generate_intervals(samps, m):
     n = len(samps)
-    xdots = [min(samps)] + [min(samps) + (max(samps) - min(samps)) * (i + 1) / m for i in range(m)]
-    ydots = [0]
+    xnums = [min(samps)] + [min(samps) + (max(samps) - min(samps)) * (i + 1) / m for i in range(m)]
+    ynums = [0]
     num_dots = []
     ind = 0
     for i in range(m):
-        cnt = 0
-        while ind < n and samps[ind] <= xdots[i + 1]:
+        count = 0
+        while ind < n and samps[ind] <= xnums[i + 1]:
             ind += 1
-            cnt += 1
-        num_dots.append(cnt)
+            count += 1
+        num_dots.append(count)
         try:
-            ydots += [cnt / n * m / (max(samps) - min(samps))]
+            ynums += [count / n * m / (max(samps) - min(samps))]
         except ZeroDivisionError:
-            ydots += [np.inf]
-    xdots += [max(samps)]
-    ydots += [0]
-    return xdots, ydots, num_dots
+            ynums += [np.inf]
+    xnums += [max(samps)]
+    #ydots += [0]
+    return xnums, ynums, num_dots
 
 
 def generate_probabilities(samps, m):
     n = len(samps)
     if m > n:
         m = n
-    xdots = [min(samps)]
-    ydots = [0]
+    xnums = [min(samps)]
+    ynums = [0]
     cnt = n / m
     prev_ind = 0
     for i in range(m):
         ind = int(n * (i + 1) / m - 1 / 2)
-        xdots += [samps[ind]]
+        xnums += [samps[ind]]
         try:
-            ydots += [cnt / n / (samps[ind] - samps[prev_ind])]
+            ynums += [cnt / n / (samps[ind] - samps[prev_ind])]
         except ZeroDivisionError:
-            ydots += [np.inf]
+            ynums += [np.inf]
         prev_ind = ind
-    xdots += [max(samps)]
-    ydots += [0]
-    return xdots, ydots
+    xnums += [max(samps)]
+    #ydots += [0]
+    return xnums, ynums
 
 import matplotlib.patches as patches
 
@@ -131,6 +131,6 @@ def build_probabilities(n, m):
 if __name__ == "__main__":
     #init_n = int(input())
     #init_m = round(init_n ** 0.5)
-    #build_intervals(init_n,init_m)
-    build_probabilities(init_n,init_m)
+    build_intervals(init_n,init_m)
+    #build_probabilities(init_n,init_m)
 
